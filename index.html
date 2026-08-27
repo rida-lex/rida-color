@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Выбор цвета фона</title>
     <style>
-        /* Базовые стили для плавного изменения цвета */
+                /* Базовые стили */
         body {
             margin: 0;
             padding: 0;
@@ -20,6 +20,19 @@
             overflow: hidden;
         }
 
+        /* 1. СТАРТОВЫЙ АНИМИРОВАННЫЙ ГРАДИЕНТ */
+        body.gradient-bg {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         /* КОНТЕЙНЕР ДЛЯ ТЕКСТА */
         .center-content {
             display: flex;
@@ -28,22 +41,23 @@
             transition: opacity 0.8s ease, transform 0.8s ease;
             opacity: 1;
             transform: scale(1);
+            z-index: 10;
         }
 
-        /* Класс для скрытия центрального блока */
         .center-content.hidden {
             opacity: 0;
             transform: scale(0.95);
-            pointer-events: none; /* Отключаем клики по скрытому коду */
+            pointer-events: none;
         }
 
-        /* Заголовок по центру */
         h1 {
             color: #333;
             text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
             user-select: none;
             margin-bottom: 10px;
             transition: color 0.4s ease;
+            text-align: center;
+            padding: 0 20px;
         }
 
         /* Отображение кода цвета */
@@ -86,7 +100,46 @@
             transform: translateY(0);
         }
 
-        /* ЗОНА АКТИВАЦИИ: Невидимая область у нижнего края экрана */
+        /* 2. ИСТОРИЯ ЦВЕТОВ (БОКОВАЯ ПАНЕЛЬ) */
+        .history-panel {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 15px 10px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        /* История скрывается вместе с центральным текстом */
+        .history-panel.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .history-item {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .history-item:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        /* ЗОНА АКТИВАЦИИ НИЖНЕЙ ПАНЕЛИ */
         .hover-zone {
             position: fixed;
             bottom: 0;
@@ -99,7 +152,7 @@
             z-index: 999;
         }
 
-        /* Контейнер для кнопок (по умолчанию скрыт) */
+        /* Контейнер для кнопок */
         .color-picker-panel {
             margin-bottom: 20px;
             background: rgba(255, 255, 255, 0.85);
@@ -116,14 +169,13 @@
             pointer-events: none;
         }
 
-        /* ПОЯВЛЕНИЕ ПАНЕЛИ: Когда мышь наведена на зону активации */
         .hover-zone:hover .color-picker-panel {
             opacity: 1;
             transform: translateY(0);
             pointer-events: auto;
         }
 
-        /* Стили для круглых кнопок выбора цвета */
+        /* Стили кнопок */
         .color-btn {
             width: 40px;
             height: 40px;
@@ -138,7 +190,6 @@
             transform: scale(1.15);
         }
 
-        /* Цвета кнопок */
         .btn-white  { background-color: #ffffff; }
         .btn-red    { background-color: #ff4d4d; }
         .btn-green  { background-color: #2ecc71; }
@@ -158,18 +209,34 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
+        /* Подсказка про клавиши управления */
+        .controls-hint {
+            font-size: 0.8rem;
+            margin-top: 15px;
+            opacity: 0.6;
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
 
+        <!-- Центральный блок -->
     <div class="center-content" id="ui-center">
         <h1 id="main-title">Выберите цвет фона</h1>
         <div class="color-code" id="color-display" title="Нажмите, чтобы скопировать" onclick="copyToClipboard()">#FFFFFF</div>
+        <div class="controls-hint">[Пробел] — случайный цвет | [← Стрелка влево] — назад</div>
+    </div>
+
+    <!-- Боковая панель истории -->
+    <div class="history-panel" id="ui-history" title="История цветов">
+        <!-- Сюда JavaScript будет добавлять кружочки последних цветов -->
     </div>
 
     <div class="copy-toast" id="toast">Код скопирован в буфер обмена!</div>
 
-    <!-- Зона наведения мыши -->
+    <!-- Нижняя зона управления -->
     <div class="hover-zone" id="bottom-zone">
         <div class="color-picker-panel">
             <button class="color-btn btn-white" onclick="changeColor('#ffffff')"></button>
@@ -182,27 +249,42 @@
         </div>
     </div>
 
+
+
     <script>
-        const title = document.getElementById('main-title');
+               const title = document.getElementById('main-title');
         const colorDisplay = document.getElementById('color-display');
         const toast = document.getElementById('toast');
         const uiCenter = document.getElementById('ui-center');
+        const uiHistory = document.getElementById('ui-history');
         const bottomZone = document.getElementById('bottom-zone');
 
         let fadeTimeout;
+        let colorHistory = []; // Массив для хранения истории цветов
+        const maxHistoryLength = 5; // Сколько цветов хранить в панели
 
         window.onload = function() {
-            const savedColor = localStorage.getItem('userBackgroundColor');
-            if (savedColor) {
-                changeColor(savedColor);
-            } else {
-                changeColor('#ffffff');
+            // Загружаем историю из памяти
+            const savedHistory = localStorage.getItem('colorHistoryList');
+            if (savedHistory) {
+                colorHistory = JSON.parse(savedHistory);
+                renderHistoryHTML();
             }
-            // При первой загрузке запускаем таймер, чтобы текст скрылся через 5 секунд
+
+            const savedColor = localStorage.getItem('userBackgroundColor');
+            if (savedColor && savedColor !== 'gradient') {
+                changeColor(savedColor, false); // Применяем без повторного добавления в историю
+            } else {
+                // Если цвета нет — включаем анимированный стартовый градиент
+                document.body.classList.add('gradient-bg');
+                colorDisplay.innerText = "ГРАДИЕНТ";
+                localStorage.setItem('userBackgroundColor', 'gradient');
+                adjustElementsColor('#ffffff'); // Настраиваем текст под белый
+            }
             startFadeTimer(); 
         };
 
-        // Запуск 5-секундного таймера скрытия текста
+        // Запуск 5-секундного таймера скрытия текста и истории
         function startFadeTimer() {
             clearTimeout(fadeTimeout);
             fadeTimeout = setTimeout(hideUI, 5000); 
@@ -210,30 +292,85 @@
 
         function hideUI() {
             uiCenter.classList.add('hidden');
+            uiHistory.classList.add('hidden'); // История прячется вместе с текстом
         }
 
         function showUI() {
             uiCenter.classList.remove('hidden');
+            uiHistory.classList.remove('hidden');
         }
 
-        // ИЗМЕНЕНИЯ ЗДЕСЬ (Убрали отслеживание мыши по всему экрану):
-        
-        // 1. Мышь зашла на нижнюю панель — мгновенно показываем текст и держим его
+        // Показ по наведении на нижнюю зону
         bottomZone.addEventListener('mouseenter', () => {
             clearTimeout(fadeTimeout);
             showUI();
         });
 
-        // 2. Мышь ушла с нижней панели — запускаем 5 секунд, после чего текст исчезнет
         bottomZone.addEventListener('mouseleave', startFadeTimer);
 
+        // УПРАВЛЕНИЕ С КЛАВИАТУРЫ
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space') {
+                event.preventDefault(); // Запрещаем прокрутку страницы пробелом
+                setRandomColor();
+            } else if (event.code === 'ArrowLeft') {
+                returnToPreviousColor();
+            }
+        });
 
         // Главная функция изменения цвета
-        function changeColor(color) {
+        function changeColor(color, addToHistory = true) {
+            // Отключаем стартовый градиент, если он активен
+            document.body.classList.remove('gradient-bg');
+            const previousColor = localStorage.getItem('userBackgroundColor');
+
+            // Добавляем в историю предыдущий цвет, если он корректный и отличается от нового
+            if (addToHistory && previousColor && previousColor !== 'gradient' && previousColor !== color) {
+                pushToHistory(previousColor);
+            }
+
             document.body.style.backgroundColor = color;
             colorDisplay.innerText = color.toUpperCase();
             localStorage.setItem('userBackgroundColor', color);
             adjustElementsColor(color);
+        }
+
+        // Логика работы с массивом истории
+        function pushToHistory(color) {
+            // Удаляем цвет, если он уже есть в истории, чтобы избежать дубликатов
+            colorHistory = colorHistory.filter(c => c !== color);
+            // Добавляем в начало массива
+            colorHistory.unshift(color);
+            // Обрезаем до максимальной длины
+            if (colorHistory.length > maxHistoryLength) {
+                colorHistory.pop();
+            }
+            // Сохраняем в локальную память и обновляем экран
+            localStorage.setItem('colorHistoryList', JSON.stringify(colorHistory));
+            renderHistoryHTML();
+        }
+
+        // Функция возврата к предыдущему цвету (Стрелка влево)
+        function returnToPreviousColor() {
+            if (colorHistory.length > 0) {
+                const lastColor = colorHistory.shift(); // Забираем цвет из истории
+                localStorage.setItem('colorHistoryList', JSON.stringify(colorHistory));
+                renderHistoryHTML();
+                changeColor(lastColor, false); // Включаем его без повторной записи
+            }
+        }
+
+        // Перерисовка кружочков истории на экране
+        function renderHistoryHTML() {
+            uiHistory.innerHTML = ''; // Очищаем панель
+            colorHistory.forEach(color => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.style.backgroundColor = color;
+                item.title = `Вернуть цвет ${color.toUpperCase()}`;
+                item.onclick = () => changeColor(color, true); // При клике делаем цвет текущим
+                uiHistory.appendChild(item);
+            });
         }
 
         // Генератор случайного HEX-кода
@@ -242,7 +379,7 @@
             changeColor(randomColor);
         }
 
-        // Настройка контрастности
+        // Настройка контрастности текста
         function adjustElementsColor(hexColor) {
             const hex = hexColor.replace('#', '');
             const r = parseInt(hex.substr(0, 2), 16);
@@ -264,6 +401,8 @@
         // Копирование в буфер обмена
         function copyToClipboard() {
             const textToCopy = colorDisplay.innerText;
+            if (textToCopy === "ГРАДИЕНТ") return; // Не копируем слово "Градиент"
+            
             navigator.clipboard.writeText(textToCopy).then(() => {
                 toast.classList.add('show');
                 setTimeout(() => {
@@ -273,7 +412,7 @@
                 console.error('Ошибка копирования: ', err);
             });
         }
-    </script>
 
+</script>
 </body>
 </html>
