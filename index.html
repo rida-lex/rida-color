@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Выбор цвета фона</title>
+    <title>Р’С‹Р±РѕСЂ С†РІРµС‚Р° С„РѕРЅР°</title>
     <style>
-        /* Базовые стили для плавного изменения цвета */
+        /* Р‘Р°Р·РѕРІС‹Рµ СЃС‚РёР»Рё РґР»СЏ РїР»Р°РІРЅРѕРіРѕ РёР·РјРµРЅРµРЅРёСЏ С†РІРµС‚Р° */
         body {
             margin: 0;
             padding: 0;
@@ -20,7 +20,7 @@
             overflow: hidden;
         }
 
-        /* КОНТЕЙНЕР ДЛЯ ТЕКСТА */
+        /* РљРћРќРўР•Р™РќР•Р  Р”Р›РЇ РўР•РљРЎРўРђ */
         .center-content {
             display: flex;
             flex-direction: column;
@@ -30,14 +30,14 @@
             transform: scale(1);
         }
 
-        /* Класс для скрытия центрального блока */
+        /* РљР»Р°СЃСЃ РґР»СЏ СЃРєСЂС‹С‚РёСЏ С†РµРЅС‚СЂР°Р»СЊРЅРѕРіРѕ Р±Р»РѕРєР° */
         .center-content.hidden {
             opacity: 0;
             transform: scale(0.95);
-            pointer-events: none; /* Отключаем клики по скрытому коду */
+            pointer-events: none; /* РћС‚РєР»СЋС‡Р°РµРј РєР»РёРєРё РїРѕ СЃРєСЂС‹С‚РѕРјСѓ РєРѕРґСѓ */
         }
 
-        /* Заголовок по центру */
+        /* Р—Р°РіРѕР»РѕРІРѕРє РїРѕ С†РµРЅС‚СЂСѓ */
         h1 {
             color: #333;
             text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
@@ -46,7 +46,7 @@
             transition: color 0.4s ease;
         }
 
-        /* Отображение кода цвета */
+        /* РћС‚РѕР±СЂР°Р¶РµРЅРёРµ РєРѕРґР° С†РІРµС‚Р° */
         .color-code {
             font-size: 1.5rem;
             font-weight: bold;
@@ -66,7 +66,7 @@
             transform: scale(1.05);
         }
 
-        /* Всплывающая подсказка "Скопировано!" */
+        /* Р’СЃРїР»С‹РІР°СЋС‰Р°СЏ РїРѕРґСЃРєР°Р·РєР° "РЎРєРѕРїРёСЂРѕРІР°РЅРѕ!" */
         .copy-toast {
             position: fixed;
             top: 20px;
@@ -86,7 +86,7 @@
             transform: translateY(0);
         }
 
-        /* ЗОНА АКТИВАЦИИ: Невидимая область у нижнего края экрана */
+        /* Р—РћРќРђ РђРљРўРР’РђР¦РР: РќРµРІРёРґРёРјР°СЏ РѕР±Р»Р°СЃС‚СЊ Сѓ РЅРёР¶РЅРµРіРѕ РєСЂР°СЏ СЌРєСЂР°РЅР° */
         .hover-zone {
             position: fixed;
             bottom: 0;
@@ -99,7 +99,7 @@
             z-index: 999;
         }
 
-        /* Контейнер для кнопок (по умолчанию скрыт) */
+        /* РљРѕРЅС‚РµР№РЅРµСЂ РґР»СЏ РєРЅРѕРїРѕРє (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ СЃРєСЂС‹С‚) */
         .color-picker-panel {
             margin-bottom: 20px;
             background: rgba(255, 255, 255, 0.85);
@@ -116,14 +116,14 @@
             pointer-events: none;
         }
 
-        /* ПОЯВЛЕНИЕ ПАНЕЛИ: Когда мышь наведена на зону активации */
+        /* РџРћРЇР’Р›Р•РќРР• РџРђРќР•Р›Р: РљРѕРіРґР° РјС‹С€СЊ РЅР°РІРµРґРµРЅР° РЅР° Р·РѕРЅСѓ Р°РєС‚РёРІР°С†РёРё */
         .hover-zone:hover .color-picker-panel {
             opacity: 1;
             transform: translateY(0);
             pointer-events: auto;
         }
 
-        /* Стили для круглых кнопок выбора цвета */
+        /* РЎС‚РёР»Рё РґР»СЏ РєСЂСѓРіР»С‹С… РєРЅРѕРїРѕРє РІС‹Р±РѕСЂР° С†РІРµС‚Р° */
         .color-btn {
             width: 40px;
             height: 40px;
@@ -138,7 +138,7 @@
             transform: scale(1.15);
         }
 
-        /* Цвета кнопок */
+        /* Р¦РІРµС‚Р° РєРЅРѕРїРѕРє */
         .btn-white  { background-color: #ffffff; }
         .btn-red    { background-color: #ff4d4d; }
         .btn-green  { background-color: #2ecc71; }
@@ -146,7 +146,7 @@
         .btn-yellow { background-color: #f1c40f; }
         .btn-purple { background-color: #9b59b6; }
 
-        /* Радужная кнопка */
+        /* Р Р°РґСѓР¶РЅР°СЏ РєРЅРѕРїРєР° */
         .btn-random {
             background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
             background-size: 200% 200%;
@@ -163,13 +163,13 @@
 <body>
 
     <div class="center-content" id="ui-center">
-        <h1 id="main-title">Выберите цвет фона</h1>
-        <div class="color-code" id="color-display" title="Нажмите, чтобы скопировать" onclick="copyToClipboard()">#FFFFFF</div>
+        <h1 id="main-title">Р’С‹Р±РµСЂРёС‚Рµ С†РІРµС‚ С„РѕРЅР°</h1>
+        <div class="color-code" id="color-display" title="РќР°Р¶РјРёС‚Рµ, С‡С‚РѕР±С‹ СЃРєРѕРїРёСЂРѕРІР°С‚СЊ" onclick="copyToClipboard()">#FFFFFF</div>
     </div>
 
-    <div class="copy-toast" id="toast">Код скопирован в буфер обмена!</div>
+    <div class="copy-toast" id="toast">РљРѕРґ СЃРєРѕРїРёСЂРѕРІР°РЅ РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР°!</div>
 
-    <!-- Зона наведения мыши -->
+    <!-- Р—РѕРЅР° РЅР°РІРµРґРµРЅРёСЏ РјС‹С€Рё -->
     <div class="hover-zone" id="bottom-zone">
         <div class="color-picker-panel">
             <button class="color-btn btn-white" onclick="changeColor('#ffffff')"></button>
@@ -178,7 +178,7 @@
             <button class="color-btn btn-blue" onclick="changeColor('#3498db')"></button>
             <button class="color-btn btn-yellow" onclick="changeColor('#f1c40f')"></button>
             <button class="color-btn btn-purple" onclick="changeColor('#9b59b6')"></button>
-            <button class="color-btn btn-random" title="Случайный цвет" onclick="setRandomColor()"></button>
+            <button class="color-btn btn-random" title="РЎР»СѓС‡Р°Р№РЅС‹Р№ С†РІРµС‚" onclick="setRandomColor()"></button>
         </div>
     </div>
 
@@ -198,11 +198,11 @@
             } else {
                 changeColor('#ffffff');
             }
-            // При первой загрузке запускаем таймер, чтобы текст скрылся через 5 секунд
+            // РџСЂРё РїРµСЂРІРѕР№ Р·Р°РіСЂСѓР·РєРµ Р·Р°РїСѓСЃРєР°РµРј С‚Р°Р№РјРµСЂ, С‡С‚РѕР±С‹ С‚РµРєСЃС‚ СЃРєСЂС‹Р»СЃСЏ С‡РµСЂРµР· 5 СЃРµРєСѓРЅРґ
             startFadeTimer(); 
         };
 
-        // Запуск 5-секундного таймера скрытия текста
+        // Р—Р°РїСѓСЃРє 5-СЃРµРєСѓРЅРґРЅРѕРіРѕ С‚Р°Р№РјРµСЂР° СЃРєСЂС‹С‚РёСЏ С‚РµРєСЃС‚Р°
         function startFadeTimer() {
             clearTimeout(fadeTimeout);
             fadeTimeout = setTimeout(hideUI, 5000); 
@@ -216,19 +216,19 @@
             uiCenter.classList.remove('hidden');
         }
 
-        // ИЗМЕНЕНИЯ ЗДЕСЬ (Убрали отслеживание мыши по всему экрану):
+        // РР—РњР•РќР•РќРРЇ Р—Р”Р•РЎР¬ (РЈР±СЂР°Р»Рё РѕС‚СЃР»РµР¶РёРІР°РЅРёРµ РјС‹С€Рё РїРѕ РІСЃРµРјСѓ СЌРєСЂР°РЅСѓ):
         
-        // 1. Мышь зашла на нижнюю панель — мгновенно показываем текст и держим его
+        // 1. РњС‹С€СЊ Р·Р°С€Р»Р° РЅР° РЅРёР¶РЅСЋСЋ РїР°РЅРµР»СЊ вЂ” РјРіРЅРѕРІРµРЅРЅРѕ РїРѕРєР°Р·С‹РІР°РµРј С‚РµРєСЃС‚ Рё РґРµСЂР¶РёРј РµРіРѕ
         bottomZone.addEventListener('mouseenter', () => {
             clearTimeout(fadeTimeout);
             showUI();
         });
 
-        // 2. Мышь ушла с нижней панели — запускаем 5 секунд, после чего текст исчезнет
+        // 2. РњС‹С€СЊ СѓС€Р»Р° СЃ РЅРёР¶РЅРµР№ РїР°РЅРµР»Рё вЂ” Р·Р°РїСѓСЃРєР°РµРј 5 СЃРµРєСѓРЅРґ, РїРѕСЃР»Рµ С‡РµРіРѕ С‚РµРєСЃС‚ РёСЃС‡РµР·РЅРµС‚
         bottomZone.addEventListener('mouseleave', startFadeTimer);
 
 
-        // Главная функция изменения цвета
+        // Р“Р»Р°РІРЅР°СЏ С„СѓРЅРєС†РёСЏ РёР·РјРµРЅРµРЅРёСЏ С†РІРµС‚Р°
         function changeColor(color) {
             document.body.style.backgroundColor = color;
             colorDisplay.innerText = color.toUpperCase();
@@ -236,13 +236,13 @@
             adjustElementsColor(color);
         }
 
-        // Генератор случайного HEX-кода
+        // Р“РµРЅРµСЂР°С‚РѕСЂ СЃР»СѓС‡Р°Р№РЅРѕРіРѕ HEX-РєРѕРґР°
         function setRandomColor() {
             const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
             changeColor(randomColor);
         }
 
-        // Настройка контрастности
+        // РќР°СЃС‚СЂРѕР№РєР° РєРѕРЅС‚СЂР°СЃС‚РЅРѕСЃС‚Рё
         function adjustElementsColor(hexColor) {
             const hex = hexColor.replace('#', '');
             const r = parseInt(hex.substr(0, 2), 16);
@@ -261,7 +261,7 @@
             }
         }
 
-        // Копирование в буфер обмена
+        // РљРѕРїРёСЂРѕРІР°РЅРёРµ РІ Р±СѓС„РµСЂ РѕР±РјРµРЅР°
         function copyToClipboard() {
             const textToCopy = colorDisplay.innerText;
             navigator.clipboard.writeText(textToCopy).then(() => {
@@ -270,7 +270,7 @@
                     toast.classList.remove('show');
                 }, 2000);
             }).catch(err => {
-                console.error('Ошибка копирования: ', err);
+                console.error('РћС€РёР±РєР° РєРѕРїРёСЂРѕРІР°РЅРёСЏ: ', err);
             });
         }
     </script>
