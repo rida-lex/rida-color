@@ -218,6 +218,23 @@
             text-align: center;
         }
 
+        /* Стили для кнопки сброса */
+        .btn-reset {
+            background-color: #ffffff;
+            color: #555555;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1;
+            user-select: none;
+        }
+        /* Эффект легкого поворота стрелки при наведении */
+        .btn-reset:hover {
+            transform: scale(1.15) rotate(-45deg);
+        }
+
     </style>
 </head>
 <body>
@@ -226,7 +243,7 @@
     <div class="center-content" id="ui-center">
         <h1 id="main-title">Выберите цвет фона</h1>
         <div class="color-code" id="color-display" title="Нажмите, чтобы скопировать" onclick="copyToClipboard()">#FFFFFF</div>
-        <div class="controls-hint">[Пробел] — случайный цвет | [← Стрелка влево] — назад</div>
+        <div class="controls-hint">[Пробел] — случайный цвет | [< Стрелка влево] — назад</div>
     </div>
 
     <!-- Боковая панель истории -->
@@ -246,8 +263,12 @@
             <button class="color-btn btn-yellow" onclick="changeColor('#f1c40f')"></button>
             <button class="color-btn btn-purple" onclick="changeColor('#9b59b6')"></button>
             <button class="color-btn btn-random" title="Случайный цвет" onclick="setRandomColor()"></button>
+			<!-- Кнопка сброса памяти на стартовый градиент -->
+<button class="color-btn btn-reset" title="Сбросить на градиент" onclick="resetToGradient()">&#8635;</button>
         </div>
+		
     </div>
+
 
 
 
@@ -411,6 +432,11 @@
             }).catch(err => {
                 console.error('Ошибка копирования: ', err);
             });
+        }
+        // Функция полного сброса памяти и возврата к градиенту
+        function resetToGradient() {
+            localStorage.clear(); // Полностью очищаем память сайта
+            location.reload();    // Перезагружаем страницу для включения градиента
         }
 
 </script>
