@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор цвета фона</title>
+    <style>
+        /* Базовые стили для плавного изменения цвета */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            transition: background-color 0.4s ease;
+            overflow: hidden;
+        }
+
+        /* КОНТЕЙНЕР ДЛЯ ТЕКСТА */
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Класс для скрытия центрального блока */
+        .center-content.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none; /* Отключаем клики по скрытому коду */
+        }
+
+        /* Заголовок по центру */
+        h1 {
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+            user-select: none;
+            margin-bottom: 10px;
+            transition: color 0.4s ease;
+        }
+
+        /* Отображение кода цвета */
+        .color-code {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            color: #555;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .color-code:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: scale(1.05);
+        }
+
+        /* Всплывающая подсказка "Скопировано!" */
+        .copy-toast {
+            position: fixed;
+            top: 20px;
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .copy-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ЗОНА АКТИВАЦИИ: Невидимая область у нижнего края экрана */
+        .hover-zone {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 999;
+        }
+
+        /* Контейнер для кнопок (по умолчанию скрыт) */
+        .color-picker-panel {
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 15px 25px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(5px);
+            display: flex;
+            gap: 15px;
+            
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        /* ПОЯВЛЕНИЕ ПАНЕЛИ: Когда мышь наведена на зону активации */
+        .hover-zone:hover .color-picker-panel {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Стили для круглых кнопок выбора цвета */
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.15);
+        }
+
+        /* Цвета кнопок */
+        .btn-white  { background-color: #ffffff; }
+        .btn-red    { background-color: #ff4d4d; }
+        .btn-green  { background-color: #2ecc71; }
+        .btn-blue   { background-color: #3498db; }
+        .btn-yellow { background-color: #f1c40f; }
+        .btn-purple { background-color: #9b59b6; }
+
+        /* Радужная кнопка */
+        .btn-random {
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 200% 200%;
+            animation: rainbow 5s ease infinite;
+        }
+
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="center-content" id="ui-center">
+        <h1 id="main-title">Выберите цвет фона</h1>
+        <div class="color-code" id="color-display" title="Нажмите, чтобы скопировать" onclick="copyToClipboard()">#FFFFFF</div>
+    </div>
+
+    <div class="copy-toast" id="toast">Код скопирован в буфер обмена!</div>
+
+    <!-- Зона наведения мыши -->
+    <div class="hover-zone" id="bottom-zone">
+        <div class="color-picker-panel">
+            <button class="color-btn btn-white" onclick="changeColor('#ffffff')"></button>
+            <button class="color-btn btn-red" onclick="changeColor('#ff4d4d')"></button>
+            <button class="color-btn btn-green" onclick="changeColor('#2ecc71')"></button>
+            <button class="color-btn btn-blue" onclick="changeColor('#3498db')"></button>
+            <button class="color-btn btn-yellow" onclick="changeColor('#f1c40f')"></button>
+            <button class="color-btn btn-purple" onclick="changeColor('#9b59b6')"></button>
+            <button class="color-btn btn-random" title="Случайный цвет" onclick="setRandomColor()"></button>
+        </div>
+    </div>
+
+    <script>
+        const title = document.getElementById('main-title');
+        const colorDisplay = document.getElementById('color-display');
+        const toast = document.getElementById('toast');
+        const uiCenter = document.getElementById('ui-center');
+        const bottomZone = document.getElementById('bottom-zone');
+
+        let fadeTimeout;
+
+        window.onload = function() {
+            const savedColor = localStorage.getItem('userBackgroundColor');
+            if (savedColor) {
+                changeColor(savedColor);
+            } else {
+                changeColor('#ffffff');
+            }
+            // При первой загрузке запускаем таймер, чтобы текст скрылся через 5 секунд
+            startFadeTimer(); 
+        };
+
+        // Запуск 5-секундного таймера скрытия текста
+        function startFadeTimer() {
+            clearTimeout(fadeTimeout);
+            fadeTimeout = setTimeout(hideUI, 5000); 
+        }
+
+        function hideUI() {
+            uiCenter.classList.add('hidden');
+        }
+
+        function showUI() {
+            uiCenter.classList.remove('hidden');
+        }
+
+        // ИЗМЕНЕНИЯ ЗДЕСЬ (Убрали отслеживание мыши по всему экрану):
+        
+        // 1. Мышь зашла на нижнюю панель — мгновенно показываем текст и держим его
+        bottomZone.addEventListener('mouseenter', () => {
+            clearTimeout(fadeTimeout);
+            showUI();
+        });
+
+        // 2. Мышь ушла с нижней панели — запускаем 5 секунд, после чего текст исчезнет
+        bottomZone.addEventListener('mouseleave', startFadeTimer);
+
+
+        // Главная функция изменения цвета
+        function changeColor(color) {
+            document.body.style.backgroundColor = color;
+            colorDisplay.innerText = color.toUpperCase();
+            localStorage.setItem('userBackgroundColor', color);
+            adjustElementsColor(color);
+        }
+
+        // Генератор случайного HEX-кода
+        function setRandomColor() {
+            const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+            changeColor(randomColor);
+        }
+
+        // Настройка контрастности
+        function adjustElementsColor(hexColor) {
+            const hex = hexColor.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            
+            if (yiq < 128) {
+                title.style.color = '#ffffff';
+                colorDisplay.style.color = '#ffffff';
+                colorDisplay.style.backgroundColor = 'rgba(0, 0, 0, 0.4)';
+            } else {
+                title.style.color = '#333333';
+                colorDisplay.style.color = '#555555';
+                colorDisplay.style.backgroundColor = 'rgba(255, 255, 255, 0.6)';
+            }
+        }
+
+        // Копирование в буфер обмена
+        function copyToClipboard() {
+            const textToCopy = colorDisplay.innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+            }).catch(err => {
+                console.error('Ошибка копирования: ', err);
+            });
+        }
+    </script>
+
+</body>
+</html>
