@@ -243,7 +243,7 @@
     <div class="center-content" id="ui-center">
         <h1 id="main-title">Выберите цвет фона</h1>
         <div class="color-code" id="color-display" title="Нажмите, чтобы скопировать" onclick="copyToClipboard()">#FFFFFF</div>
-        <div class="controls-hint">[Пробел] — случайный цвет | [< Стрелка влево] — назад</div>
+        <div class="controls-hint">[Tab] — случайный цвет | [< Стрелка влево] — назад</div>
     </div>
 
     <!-- Боковая панель истории -->
@@ -331,7 +331,7 @@
 
         // УПРАВЛЕНИЕ С КЛАВИАТУРЫ
         document.addEventListener('keydown', (event) => {
-            if (event.code === 'Space') {
+            if (event.code === 'Tab') {
                 event.preventDefault(); // Запрещаем прокрутку страницы пробелом
                 setRandomColor();
             } else if (event.code === 'ArrowLeft') {
